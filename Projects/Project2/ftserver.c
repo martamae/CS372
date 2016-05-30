@@ -192,9 +192,8 @@ int handleRequest(int clientControlSocket) {
 		memset((char *)&lenStr, '\0', sizeof(lenStr));
 
 		//convert length to string
-		snprintf(lenStr, fileLength, "%d", 15);
+		sprintf(lenStr, "%d", fileLength);
 
-		printf("%s\n", lenStr);
 		//send file text size
 		if (send(dataSocket, &lenStr, sizeof(lenStr), 0) == -1) { //send
 			//If error sending length
@@ -236,9 +235,12 @@ int handleRequest(int clientControlSocket) {
 
 			len += 1024; //add length sent to len
 		}
-
+	
 		//receive ACK
 		recv(dataSocket, &rcvACK, sizeof(rcvACK), 0);
+		
+		//Print success message
+
 
 		free(fileText);
 	}

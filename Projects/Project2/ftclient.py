@@ -186,12 +186,14 @@ def receiveFile(serverDataSocket, requestType, filename):
 		#receive length of file
 		len = serverDataSocket.recv(15)
 
+		print 'Length: ' + len
+
 		#send ACK
 		ACK = 'ACK'
 		serverDataSocket.send(ACK)
 
 		#if error receiving file
-		fileLength = int(len)
+		fileLength = int(len.strip('\0'))
 		
 		#Error opening/sending file
 		if (fileLength == "-1"):
@@ -204,8 +206,9 @@ def receiveFile(serverDataSocket, requestType, filename):
 		for file in dir:
 			if (file == filename): 
 				#if filename is already in directory rename
-				pid = os.getpid()
-				filename = filename + pid
+				pid = os.getpid() #get pid
+				pid = str(pid) #convert to string
+				filename = pid + filename
 
 		# open file for appending
 		file = open(filename, "a")
@@ -226,6 +229,8 @@ def receiveFile(serverDataSocket, requestType, filename):
 			else:
 				#add received portion to file
 				file.write(r)
+
+				len += 1024
 
 		#send ACK
 		ACK = 'ACK'
