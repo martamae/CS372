@@ -2,7 +2,15 @@
 # CS 372
 # Program #2
 #
-# Description:
+# Description:  starts on host and takes parameters <SERVER_HOST>
+# <SERVER_PORT> <COMMAND> <optional:FILENAME><DATA_PORT>
+# establish control connection w/ server
+# Sends either -l or -g command, to list directory or
+# request file respectively
+# If invalid command, prints error msg
+#
+# receives contents of directory or file
+# if error w/ file receives msg from server 
 # 
 # References:
 # http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python
@@ -117,6 +125,7 @@ def makeRequest(controlSocket, requestType, dataPort, filename):
 		#get hostname
 		clientHost = socket.gethostname()
 
+		#send
 		if(controlSocket.send(clientHost) == -1):
 			#error sending hostname
 			print >> sys.stderr, 'ERROR: error sending hostname\n\n'
@@ -186,8 +195,6 @@ def receiveFile(serverDataSocket, requestType, filename):
 		#receive length of file
 		len = serverDataSocket.recv(15)
 
-		print 'Length: ' + len
-
 		#send ACK
 		ACK = 'ACK'
 		serverDataSocket.send(ACK)
@@ -196,8 +203,8 @@ def receiveFile(serverDataSocket, requestType, filename):
 		fileLength = int(len.strip('\0'))
 		
 		#Error opening/sending file
-		if (fileLength == "-1"):
-			print >> sys.stderr, 'ERROR: file unable to be sent\n\n'
+		if (fileLength == -1):
+			print >> sys.stderr, 'ERROR: unable to open or send file\n\n'
 			return -1
 
 		#compare name of file to files in directory
@@ -228,7 +235,7 @@ def receiveFile(serverDataSocket, requestType, filename):
 				return 0
 			else:
 				#add received portion to file
-				file.write(r)
+				file.write(r.strip('\0'))
 
 				len += 1024
 
@@ -236,6 +243,7 @@ def receiveFile(serverDataSocket, requestType, filename):
 		ACK = 'ACK'
 		serverDataSocket.send(ACK)
 	
+		print 'Transfer of file successful. Saved as: ' + filename
 	return 0
 
 

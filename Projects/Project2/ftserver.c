@@ -3,10 +3,21 @@
 * CS 372
 * Program #2
 *
-* Description:
+* Description: Creates socket on SERVER_PORT and waits on 
+* PORT_NUM for client to connect. 
+* Establishes control connection w/ client.
+* Waits for client to send a command over control connection
+* 
+* If invalid command sent - error msg sent
+*
+* Initiates data connection w/ client on DATA_PORT 
+*
+* Sends file or directory contents back to client
+* if error w/ file send msg to client
 *
 * References:
-*	http://stackoverflow.com/questions/4204666/how-to-list-files-in-a-directory-in-a-c-program
+*	http://stackoverflow.com/questions/4204666/how-to-list-
+*	files-in-a-directory-in-a-c-program
 **********************************************************/
 #include<stdio.h>
 #include<stdlib.h>
@@ -133,7 +144,7 @@ int handleRequest(int clientControlSocket) {
 			fprintf(stderr, "ERROR: error receiving filename from client\n\n");
 			return -1;
 		}
-		printf ("%s\n", filename);
+		
 		//acknowledge
 		if ((send(clientControlSocket, ACK, sizeof(ACK), 0)) == -1){
 			//error Acknowledging
@@ -175,7 +186,8 @@ int handleRequest(int clientControlSocket) {
 			//error opening file
 			fprintf(stderr, "ERROR: error opening file\n\n");
 			
-			char * error = "-1";
+			char error[3];
+			strncpy(error, "-1", 3);
 			//send error signal to client
 			send(dataSocket, &error, 2, 0);
 
@@ -270,8 +282,6 @@ int handleRequest(int clientControlSocket) {
 
 			//copy name to name variable
 			strncpy(name, d->d_name, strlen(d->d_name));
-
-			printf("%s\n", name);
 
 			//if name == . or name == .. ignore
 			if (strncmp(name, ".", sizeof(name)) == 0 || strncmp(name, "..", sizeof(name)) == 0){
