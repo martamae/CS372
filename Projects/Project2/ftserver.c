@@ -179,6 +179,9 @@ int handleRequest(int clientControlSocket) {
 	}
 
 	if(requestType == 1) {//if file request
+		//Print msg to user
+		printf("File '%s' requested on port %d.\n", filename, dataPort);
+
 		//send file
 		//open file for reading
 		int file;
@@ -257,6 +260,9 @@ int handleRequest(int clientControlSocket) {
 		free(fileText);
 	}
 	else if(requestType == 0) {//if directory request
+		//Print msg to user
+		printf("List directory requested on port %d\n", dataPort);
+
 		//send directory
 		//open directory for reading
 		DIR *dir;
@@ -332,6 +338,9 @@ int main(int argc, char ** argv) {
 		//Error in start up
 		exit(1);
 	}
+
+	//Print msg that server is open
+	printf("Server open on %d\n", serverPort);
 
 	//loop and accept
 	while (1) { //loop
